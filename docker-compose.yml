@@ -1,11 +1,16 @@
 
-version: '3'
 services:
 
   server:
+    build: .
     image: bacnet
     command: ["bacserv", "200001"]
-    network_mode: bridge
+    ports:
+      - "14780:47808/udp"
+    environment:
+      - BACNET_IP_PORT=47808
+      - BACNET_IP_BROADCAST=255.255.255.255
+    restart: unless-stopped
 
   # Pump values into server.
   # TODO: Needs more convenient Env based config
@@ -14,5 +19,5 @@ services:
     depends_on:
       - server
     command: ["perl", "/simulator"]
-    network_mode: bridge
+    restart: unless-stopped
     
